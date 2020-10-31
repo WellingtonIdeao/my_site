@@ -1,1 +1,1 @@
-# Blog Bootstrap Django
+# Blog Django

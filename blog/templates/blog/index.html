@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+  Post List
+{% endblock title %}
+
+{% block content %}
+<h2>Posts</h2>
+<ul>
+<form method="get">
+    <input type="text" name="search" placeholder="Search">
+    <button type="submit" class="btn btn-primary">
+        Buscar
+    </button>
+</form>
+</ul>
+<ul>
+    {% for post in post_list %}
+        <li>{{ post.title }}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

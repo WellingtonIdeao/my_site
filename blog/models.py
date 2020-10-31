@@ -7,9 +7,15 @@ from django.utils import timezone
 class Category(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -20,10 +26,16 @@ class Post(models.Model):
     categories = models.ManyToManyField(Category)
     tags = models.ManyToManyField(Tag)
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(max_length=140, null=False, blank=False)
-    answer = models.ForeignKey('self', on_delete=models.CASCADE)
+    answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.text
 

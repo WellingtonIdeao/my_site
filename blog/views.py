@@ -73,7 +73,7 @@ class PostByTag(ListView):
     context_object_name = 'post_list'
 
     def get_queryset(self):
-        return Post.objects.filter(tags__name=self.kwargs['slug'])
+        return Post.objects.filter(tags__slug=self.kwargs['slug'])
 
 
 

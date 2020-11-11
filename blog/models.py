@@ -24,7 +24,7 @@ class Tag(models.Model):
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, unique=True)
-    title = models.CharField(max_length=50, null=False, blank=False, unique=True)
+    title = models.CharField(max_length=50, null=False, blank=False)
     description = models.CharField(max_length=255, null=False, blank=False)
     body = models.TextField(max_length=255, null=False, blank=False)
     pub_date = models.DateTimeField(default=timezone.now, null=False, blank=False)

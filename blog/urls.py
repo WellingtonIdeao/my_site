@@ -4,6 +4,6 @@ from .views import *
 app_name = 'blog'
 urlpatterns = [
     path('post/', PostListView.as_view(), name='index'),
-    path('post/<int:pk>/', PostView.as_view(), name='post'),
-    path('post/<slug:category>/', PostByCategory.as_view(), name='post_category')
+    path('post/<slug:slug>/', PageSelectView.as_view(), name='post'),
+    path('post/tag/<slug:slug>/', PostByTag.as_view(), name='tag'),
 ]

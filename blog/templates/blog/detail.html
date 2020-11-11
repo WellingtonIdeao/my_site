@@ -5,9 +5,29 @@ Post detail
 {% endblock title %}
 
 {% block content %}
+<a href="{% url 'blog:post' post.slug %}#disqus_thread">Comment</a>
 <ul>
     <li>{{ post.title }}</li>
     <li>{{ post.author }}</li>
-    <li>{{ post.text }}</li>
+    <li>{{ post.description }}</li>
+    <li> {{post.body }}</li>
+    {% for category in post.categories.all %}
+    <li> {{ category }}</li>
+    {% endfor%}
+    {% for tag in post.tags.all %}
+    <li> {{ tag }}</li>
+    {% endfor %}
 </ul>
+
+'<!--<form action="{% url 'blog:post' post.id %}" method="post">{% csrf_token %}
+     <p>{{ form.as_p }}</p>
+    {% if request.is_authenticated %}
+        <button class="btn waves-effect waves-light" type="submit" name="to_post">to post</button>
+    {% else %}
+        <button class="btn waves-effect waves-light" type="submit" name="to_post">logar</button>
+    {% endif %}
+ </form> -->
+ {% include 'blog/comments.html' with url=post.slug %}
+
+<script id="dsq-count-scr" src="//http-127-0-0-1-8000-yk0smrcvqm.disqus.com/count.js" async></script>
 {% endblock %}

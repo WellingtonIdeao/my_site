@@ -16,7 +16,13 @@
 </ul>
 <ul>
     {% for post in post_list %}
-        <li>{{ post.title }}</li>
+     <div>
+        <a href="{% url 'blog:post' post.slug %}">{{ post.title }}</a>
+    </div>
+
+
+
     {% endfor %}
 </ul>
+
 {% endblock content %}

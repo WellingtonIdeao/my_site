@@ -1,8 +1,5 @@
 from .models import *
 from django.views.generic import ListView, DetailView
-from django.views import View
-from django.shortcuts import get_object_or_404, redirect, reverse
-from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 
@@ -20,7 +17,41 @@ class PostListView(ListView):
         return post
 
 
-'''class PostView(DetailView):
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'blog/detail.html'
+    context_object_name = 'post'
+
+
+class PostByTag(ListView):
+    model = Post
+    template_name = 'blog/index.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        return Post.objects.filter(tags__slug=self.kwargs['slug'])
+
+
+class PostByCategory(ListView):
+    model = Post
+    template_name = 'blog/index.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        return Post.objects.filter(categories__slug=self.kwargs['slug'])
+
+
+'''class PageSelectView(View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            category = Category.objects.get(slug=self.kwargs['slug'])
+            view = PostByCategory.as_view()
+        except Category.DoesNotExist:
+            view = PostDetail.as_view()
+        return view(request, *args, **kwargs)
+
+class PostView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
     context_object_name = 'post'
@@ -39,42 +70,6 @@ class PostListView(ListView):
             form.save()
             return redirect(reverse('blog:post', args=(post.id, )))
 '''
-
-
-class PostByCategory(ListView):
-    model = Post
-    template_name = 'blog/index.html'
-    context_object_name = 'post_list'
-
-    def get_queryset(self):
-        return Post.objects.filter(categories__name__iexact=self.kwargs['slug'])
-
-
-class PageSelectView(View):
-
-    def get(self, request, *args, **kwargs):
-        try:
-            category = Category.objects.get(name=self.kwargs['slug'])
-            view = PostByCategory.as_view()
-        except Category.DoesNotExist:
-            view = PostDisplay.as_view()
-        return view(request, *args, **kwargs)
-
-
-class PostDisplay(DetailView):
-    model = Post
-    template_name = 'blog/detail.html'
-    context_object_name = 'post'
-
-
-class PostByTag(ListView):
-    model = Post
-    template_name = 'blog/index.html'
-    context_object_name = 'post_list'
-
-    def get_queryset(self):
-        return Post.objects.filter(tags__slug=self.kwargs['slug'])
-
 
 
 

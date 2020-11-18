@@ -222,7 +222,7 @@ class PostByTagTest(TestCase):
         category = create_category('category name', slugify('category name'))
         tag = create_tag('tag name', slugify('tag name'))
 
-        post = create_post(author, title, slug, category, tag)
+        create_post(author, title, slug, category, tag)
 
         url = reverse('blog:post_by_tag_list', kwargs={'slug': slugify(tag)})
         response = self.client.get(url)
@@ -240,10 +240,53 @@ class PostByTagTest(TestCase):
         title2 = 'post title2'
         slug2 = slugify(title2)
 
-        post = create_post(author, title, slug, category, tag)
-        post2 = create_post(author, title2, slug2, category, tag)
+        create_post(author, title, slug, category, tag)
+        create_post(author, title2, slug2, category, tag)
 
         url = reverse('blog:post_by_tag_list', kwargs={'slug': slugify(tag)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context['post_list'],
+            ['<Post: post title>', '<Post: post title2>']
+        )
+
+
+class PostByCategoryTest(TestCase):
+
+    def test_category_page_does_not_exist(self):
+        category = create_category('trophy guides', slugify('trophy-guides'))
+        url = reverse('blog:trophy_guides_list', kwargs={'slug': slugify(category)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_category_page_one_found(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+        category = create_category('trophy guides', slugify('trophy-guides'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        create_post(author, title, slug, category, tag)
+
+        url = reverse('blog:trophy_guides_list', kwargs={'slug': slugify(category)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_page_many_found(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+        category = create_category('trophy guides', slugify('trophy-guides'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        title2 = 'post title2'
+        slug2 = slugify(title2)
+
+        create_post(author, title, slug, category, tag)
+        create_post(author, title2, slug2, category, tag)
+
+        url = reverse('blog:trophy_guides_list', kwargs={'slug': slugify(category)})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(

@@ -336,6 +336,34 @@ class PostByCategoryTest(TestCase):
 '''
 
 
+class PostDetailTest(TestCase):
+
+    def test_post_does_not_exist(self):
+        url = reverse('blog:post', kwargs={'slug': 'url-does-not-exist'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_exist(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+
+        category = create_category('category name', slugify('category name'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        post = create_post(author, title, slug, category, tag)
+
+        url = reverse('blog:post', kwargs={'slug': slug})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['post'], post)
+
+
+
+
+
+
+
 
 
 

@@ -184,6 +184,74 @@ class PostListIndexTest(TestCase):
         )
 
 
+class PostDetailTest(TestCase):
+
+    def test_post_does_not_exist(self):
+        url = reverse('blog:post', kwargs={'slug': 'url-does-not-exist'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_exist(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+
+        category = create_category('category name', slugify('category name'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        post = create_post(author, title, slug, category, tag)
+
+        url = reverse('blog:post', kwargs={'slug': slug})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['post'], post)
+
+
+class PostByTagTest(TestCase):
+
+    def test_post_tag_page_does_not_exist(self):
+        url = reverse('blog:post_by_tag_list', kwargs={'slug': 'tag-does-not-exist'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_tag_page_one_found(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+
+        category = create_category('category name', slugify('category name'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        post = create_post(author, title, slug, category, tag)
+
+        url = reverse('blog:post_by_tag_list', kwargs={'slug': slugify(tag)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['post_list'], ['<Post: post title>'])
+
+    def test_post_tag_page_many_found(self):
+        author = create_user('user', 'senha')
+        title = 'post title'
+        slug = slugify(title)
+
+        category = create_category('category name', slugify('category name'))
+        tag = create_tag('tag name', slugify('tag name'))
+
+        title2 = 'post title2'
+        slug2 = slugify(title2)
+
+        post = create_post(author, title, slug, category, tag)
+        post2 = create_post(author, title2, slug2, category, tag)
+
+        url = reverse('blog:post_by_tag_list', kwargs={'slug': slugify(tag)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context['post_list'],
+            ['<Post: post title>', '<Post: post title2>']
+        )
+
+
 '''     self.assertQuerysetEqual(response.context['post_list'], [])
 
     def test_one_post(self):
@@ -334,34 +402,6 @@ class PostByCategoryTest(TestCase):
             ]
         )
 '''
-
-
-class PostDetailTest(TestCase):
-
-    def test_post_does_not_exist(self):
-        url = reverse('blog:post', kwargs={'slug': 'url-does-not-exist'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
-
-    def test_post_exist(self):
-        author = create_user('user', 'senha')
-        title = 'post title'
-        slug = slugify(title)
-
-        category = create_category('category name', slugify('category name'))
-        tag = create_tag('tag name', slugify('tag name'))
-
-        post = create_post(author, title, slug, category, tag)
-
-        url = reverse('blog:post', kwargs={'slug': slug})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['post'], post)
-
-
-
-
-
 
 
 
